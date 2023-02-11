@@ -33,7 +33,7 @@ export async function buscarClientePorId(req, res){
 };
 
 export async function inserirCliente(req, res){
-    const cliente = req.body
+    const cliente = req.body;
     
     try {
         
@@ -44,11 +44,38 @@ export async function inserirCliente(req, res){
         }
 
         await db.query(`INSERT INTO customers (name,phone,cpf,birthday) 
-        VALUES (${cliente.name},${cliente.phone},${cliente.cpf},${cliente.birthday})`)
+        VALUES (${cliente.name},${cliente.phone},${cliente.cpf},${cliente.birthday})`);
 
         return res.sendStatus(201);
 
     } catch (error) {
+        return res.status(500).send(console.log(error.message));
+    }
+}
+
+export async function atualizarCliente(req,res){
+    const {id} = req.params
+    const cliente = req.body;
+
+    try {
+
+        const verificaUsuario = await db.query(`SELECT * FROM customers where id= ${id}`);
+
+        if(verificaUsuario.cpf !== cliente.cpf){
+            return res.sendStatus(409);
+        }
+
+        await db.query(`UPDATE customers 
+        SET name = ${cliente.name}, 
+            phone = ${cliente.phone}, 
+            cpf = ${cliente.cpf}, 
+            birthday = ${cliente.birthday}
+        WHERE id = ${verificaUsuario.id}
+        `);
+
+        return res.sendStatus(200);
+
+    }  catch (error) {
         return res.status(500).send(console.log(error.message));
     }
 }
