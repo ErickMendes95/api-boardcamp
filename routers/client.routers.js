@@ -6,7 +6,7 @@ import {validateSchema} from "../middleware/validateSchema.middleware.js"
 const router = Router();
 
 router.get("/customers", buscarClientes);
-router.get("customers/:id", buscarClientePorId);
+router.get("/customers/:id", buscarClientePorId);
 router.post("/customers",validateSchema(clientSchema), inserirCliente);
 router.put("/customers/:id",validateSchema(clientSchema), atualizarCliente);
 

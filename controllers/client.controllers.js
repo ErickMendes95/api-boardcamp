@@ -37,14 +37,14 @@ export async function inserirCliente(req, res){
     
     try {
         
-        const verificaCPF = await db.query(`SELECT * FROM customers where cpf= ${cliente.cpf}`);
+        const verificaCPF = await db.query(`SELECT * FROM customers where cpf= '${cliente.cpf}'`);
 
         if(verificaCPF.rowCount === 1){
             return res.sendStatus(409);
         }
 
         await db.query(`INSERT INTO customers (name,phone,cpf,birthday) 
-        VALUES (${cliente.name},${cliente.phone},${cliente.cpf},${cliente.birthday})`);
+        VALUES ('${cliente.name}','${cliente.phone}','${cliente.cpf}','${cliente.birthday}')`);
 
         return res.sendStatus(201);
 
@@ -61,16 +61,16 @@ export async function atualizarCliente(req,res){
 
         const verificaUsuario = await db.query(`SELECT * FROM customers where id= ${id}`);
 
-        if(verificaUsuario.cpf !== cliente.cpf){
+        if(verificaUsuario.rows[0].cpf !== cliente.cpf){
             return res.sendStatus(409);
         }
 
         await db.query(`UPDATE customers 
-        SET name = ${cliente.name}, 
-            phone = ${cliente.phone}, 
-            cpf = ${cliente.cpf}, 
-            birthday = ${cliente.birthday}
-        WHERE id = ${verificaUsuario.id}
+        SET "name" = '${cliente.name}', 
+            "phone" = '${cliente.phone}', 
+            "cpf" = '${cliente.cpf}', 
+            "birthday" = '${cliente.birthday}'
+        WHERE id = '${id}'
         `);
 
         return res.sendStatus(200);
