@@ -1,4 +1,4 @@
-import { db } from "../database/database";
+import { db } from "../database/database.js";
 
 export async function buscarClientes(req, res){
     

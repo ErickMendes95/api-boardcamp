@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { buscarClientes, buscarClientePorId, inserirCliente, atualizarCliente } from "../controllers/client.controllers";
-import { clientSchema } from "../models/clientSchema";
-import {validateSchema} from "../middleware/validateSchema.middleware"
+import { buscarClientes, buscarClientePorId, inserirCliente, atualizarCliente } from "../controllers/client.controllers.js";
+import { clientSchema } from "../models/clientSchema.js";
+import {validateSchema} from "../middleware/validateSchema.middleware.js"
 
 const router = Router();
 

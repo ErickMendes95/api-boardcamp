@@ -1,9 +1,11 @@
 import joi from 'joi';
-import validator from 'cpf-cnpj-validator';
+import joiDate from "@joi/date"
 
-export const clientSchema = joi.object.extend(validator)({
+const Joi = joi.extend(joiDate)
+
+export const clientSchema = joi.object({
     name: joi.string().required(),
     phone: joi.string().min(10).max(11).pattern(/^[0-9]+$/).required(),
-    cpf: joi.document().cpf().required(),
-    birthday: joi.date().format("YYYY-MM-DD")
+    cpf: joi.string().min(11).max(11).pattern(/^[0-9]+$/).required(),
+    birthday: Joi.date().format("YYYY-MM-DD").required()
 })

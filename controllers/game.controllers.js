@@ -1,4 +1,4 @@
-import { db } from "../database/database";
+import { db } from "../database/database.js";
 
 export async function buscarJogos(req, res){
     
@@ -13,23 +13,24 @@ export async function buscarJogos(req, res){
 };
 
 export async function inserirJogo(req, res){
-
-    const jogo = req.body;
-
+    
+    const game = req.body;
+    console.log(game)
     try {
+    
+        // if((jogo.stockTotal || jogo.pricePerDay) <= 0 ){
+        //     return res.sendStatus(400);
+        // }
         
-        if((jogo.stockTotal || jogo.pricePerDay) <= 0 ){
-            return res.sendStatus(400);
-        }
+        const verificaJogo = await db.query("SELECT * FROM games WHERE name="+game.name);
+        console.log(verificaJogo.rows)
         
-        const verificaNome = await db.query(`SELECT * FROM games where name= ${jogo.name}`);
-
-        if(verificaNome.rowCount === 1){
-            return res.sendStatus(409);
-        }
-
-        await db.query(`INSERT INTO games (name, image, stockTotal, pricePerDay) 
-        VALUES (${jogo.name},${jogo.image},${jogo.stockTotal},${jogo.pricePerDay})`);
+        // if(verificaJogo.rowCount !== 0){
+        //     return res.sendStatus(409);
+        // }
+        
+        // await db.query(`INSERT INTO games (name, image, stockTotal, pricePerDay) 
+        // VALUES (${jogo.name}, ${jogo.image}, ${jogo.stockTotal}, ${jogo.pricePerDay});`);
         
         return res.sendStatus(201);
 
