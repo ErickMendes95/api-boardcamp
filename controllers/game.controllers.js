@@ -14,23 +14,21 @@ export async function buscarJogos(req, res){
 
 export async function inserirJogo(req, res){
     
-    const game = req.body;
-    console.log(game)
+    const jogo = req.body;
+    
     try {
     
-        // if((jogo.stockTotal || jogo.pricePerDay) <= 0 ){
-        //     return res.sendStatus(400);
-        // }
+        if((jogo.stockTotal || jogo.pricePerDay) <= 0 ){
+            return res.sendStatus(400);
+        }
         
-        const verificaJogo = await db.query("SELECT * FROM games WHERE name="+game.name);
-        console.log(verificaJogo.rows)
+        const verificaJogo = await db.query(`SELECT * FROM games WHERE name='${jogo.name}'`);
         
-        // if(verificaJogo.rowCount !== 0){
-        //     return res.sendStatus(409);
-        // }
+        if(verificaJogo.rowCount !== 0){
+            return res.sendStatus(409);
+        }
         
-        // await db.query(`INSERT INTO games (name, image, stockTotal, pricePerDay) 
-        // VALUES (${jogo.name}, ${jogo.image}, ${jogo.stockTotal}, ${jogo.pricePerDay});`);
+        await db.query(`INSERT INTO games (name,image,"stockTotal","pricePerDay") VALUES ('${jogo.name}','${jogo.image}', ${jogo.stockTotal},${jogo.pricePerDay})`);
         
         return res.sendStatus(201);
 
