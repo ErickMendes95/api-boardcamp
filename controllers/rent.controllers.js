@@ -1,21 +1,21 @@
 import { db } from "../database/database.js";
+import dayjs from "dayjs"
 
 export async function buscarAlugueis(req, res){
     
     try {
-        const alugueis = await db.query(`SELECT 
+        const alugueis = await db.query(`
+        SELECT 
             rentals.*, 
             customers.id AS customer_id, 
             customers.name AS customer_name, 
             games.id AS game_id, 
             games.name AS game_name        
         FROM rentals 
-        INNER JOIN "customers"
-            ON 'rentals.customerId'='customers.id'
-        INNER JOIN "games"
-            ON 'rentals.gameId'='games.id'
+        INNER JOIN customers ON rentals."customerId"= customers.id
+        INNER JOIN games ON rentals."gameId"= games.id
         `);
-        
+
         return res.send(alugueis.rows);
 
     } catch (err) {
@@ -25,32 +25,33 @@ export async function buscarAlugueis(req, res){
 
 export async function inserirAluguel(req, res){
 
-    const aluguel = req.body; //customerId, gameId, daysRented (number, number, number)
+    const aluguel = req.body;
     
     try {
 
         if(aluguel.daysRented <= 0){
+            console.log("oi")
             return res.sendStatus(400)
         }
 
-        const customerExist = await db.query(`SELECT * FROM customers WHERE id= ${aluguel.customerId}`)
+        const customerExist = await db.query(`SELECT * FROM customers WHERE id= '${aluguel.customerId}'`)
         
-        if(!customerExist){
+        if(customerExist.rowCount === 0){
             return res.sendStatus(400)
         }
 
         const gameExist = await db.query(`SELECT * FROM games WHERE id= ${aluguel.gameId}`)
         
-        if(!gameExist){
+        if(gameExist.rowCount === 0){
             return res.sendStatus(400)
         }
 
         const originalPrice = (gameExist.rows[0].pricePerDay)*(aluguel.daysRented)
         const rentDate = dayjs().format("YYYY-MM-DD");
-
-        const gameDisponivel = (`SELECT * FROM rentals
-        WHERE "gameId"= ${gameExist.id} AND "returnDate"=NULL
-        `)
+        
+        const gameDisponivel = await db.query(`SELECT * FROM rentals
+            WHERE "gameId"= ${gameExist.rows[0].id} AND "returnDate"= null
+        `);
 
         if(gameDisponivel.rowCount === gameExist.rows[0].stockTotal){
             return res.sendStatus(400)
