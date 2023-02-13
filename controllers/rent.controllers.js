@@ -4,6 +4,7 @@ import dayjs from "dayjs"
 export async function buscarAlugueis(req, res){
     
     try {
+
         const alugueis = await db.query(`
         SELECT 
             rentals.*, 
@@ -14,7 +15,7 @@ export async function buscarAlugueis(req, res){
         FROM rentals 
         JOIN customers ON rentals."customerId"= customers.id
         JOIN games ON rentals."gameId"= games.id
-        `);
+        `); 
         console.log(alugueis.rows);
 
         return res.send(alugueis.rows);
@@ -53,8 +54,9 @@ export async function inserirAluguel(req, res){
         const gameDisponivel = await db.query(`SELECT * FROM rentals
             WHERE "gameId"= ${gameExist.rows[0].id} AND "returnDate"= null
         `);
+        console.log(gameDisponivel.rowCount, gameExist.rows[0].stockTotal)
 
-        if(gameDisponivel.rowCount >= gameExist.rows[0].stockTotal){
+        if(gameDisponivel.rowCount > gameExist.rows[0].stockTotal){
             return res.sendStatus(400)
         }
 
