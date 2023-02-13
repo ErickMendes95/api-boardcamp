@@ -12,9 +12,10 @@ export async function buscarAlugueis(req, res){
             games.id AS game_id, 
             games.name AS game_name        
         FROM rentals 
-        INNER JOIN customers ON rentals."customerId"= customers.id
-        INNER JOIN games ON rentals."gameId"= games.id
+        JOIN customers ON rentals."customerId"= customers.id
+        JOIN games ON rentals."gameId"= games.id
         `);
+        console.log(alugueis.rows);
 
         return res.send(alugueis.rows);
 
