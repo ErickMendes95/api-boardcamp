@@ -13,12 +13,29 @@ export async function buscarAlugueis(req, res){
             games.id AS game_id, 
             games.name AS game_name        
         FROM rentals 
-        JOIN customers ON rentals."customerId"= customers.id
-        JOIN games ON rentals."gameId"= games.id
+        LEFT JOIN customers ON rentals."customerId"= customers.id
+        LEFT JOIN games ON rentals."gameId"= games.id
         `); 
-        console.log(alugueis.rows);
 
-        return res.send(alugueis.rows);
+        const alugueisTransformados = alugueis.rows.map(row => ({
+            id: row.id,
+            customerId: row.customerId,
+            gameId: row.gameId,
+            rentDate: row.rentDate,
+            returnDate: row.returnDate,
+            originalPrice: row.originalPrice,
+            delayFee: row.delayFee,
+            customer: {
+              id: row.customer_id,
+              name: row.customer_name
+            },
+            game: {
+              id: row.game_id,
+              name: row.game_name
+            }
+        }))
+
+        return res.send(alugueisTransformados);
 
     } catch (err) {
         return res.status(500).send(console.log(err.message));
@@ -83,19 +100,20 @@ export async function finalizarAluguel(req, res){
     try {
 
         const aluguel = await db.query(`SELECT * FROM rentals WHERE id=${id}`);
-
-        const jogo = await db.query(`SELECT games."pricePerDay" FROM games WHERE id='${aluguel.rows[0].gameId}'`)
         
         if(aluguel.rowCount === 0){
             return res.sendStatus(404);
         }
+
+        const jogo = await db.query(`SELECT games."pricePerDay" FROM games WHERE id='${aluguel.rows[0].gameId}'`)
+        
 
         if(aluguel.rows[0].returnDate !== null){
             return res.sendStatus(400);
         }
         
         if(dayjs().diff(aluguel.rows[0].rentDate, 'day') > aluguel.rows[0].daysRented ){
-            delayFee = dayjs().diff(aluguel.rows[0].rentDate, 'day') * jogo.rows[0].pricePerDay;
+            delayFee = (dayjs().diff(aluguel.rows[0].rentDate, 'day') - aluguel.rows[0].daysRented) * jogo.rows[0].pricePerDay;
         }
 
         await db.query(`UPDATE rentals
