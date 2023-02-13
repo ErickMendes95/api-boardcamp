@@ -72,7 +72,7 @@ export async function inserirAluguel(req, res){
             WHERE "gameId"= ${gameExist.rows[0].id} AND "returnDate"= null
         `);
 
-        if(gameDisponivel.rowCount >= gameExist.rows[0].stockTotal){
+        if(gameDisponivel.rowCount < gameExist.rows[0].stockTotal){
             return res.sendStatus(400)
         }
 
