@@ -50,7 +50,6 @@ export async function inserirAluguel(req, res){
     try {
 
         if(aluguel.daysRented <= 0){
-            console.log("oi")
             return res.sendStatus(400)
         }
 
@@ -72,9 +71,8 @@ export async function inserirAluguel(req, res){
         const gameDisponivel = await db.query(`SELECT * FROM rentals
             WHERE "gameId"= ${gameExist.rows[0].id} AND "returnDate"= null
         `);
-        console.log(gameDisponivel.rowCount, gameExist.rows[0].stockTotal)
 
-        if(gameDisponivel.rowCount > gameExist.rows[0].stockTotal){
+        if(gameDisponivel.rowCount >= gameExist.rows[0].stockTotal){
             return res.sendStatus(400)
         }
 
