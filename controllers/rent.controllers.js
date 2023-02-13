@@ -110,10 +110,23 @@ export async function finalizarAluguel(req, res){
 
 export async function deletarAluguel(req,res){
 
-    const cliente = req.body;
+    const {id} = req.params;
 
     try {
 
+        const aluguel = await db.query(`SELECT * FROM rentals WHERE id=${id}`);
+
+        if(aluguel.rowCount === 0){
+            return res.sendStatus(404);
+        }
+
+        if(aluguel.rows[0].returnDate === null){
+            return res.sendStatus(400);
+        }
+
+        await db.query(`DELETE FROM rentals WHERE id= ${id}`);
+
+        return res.sendStatus(200)
 
     }  catch (error) {
         return res.status(500).send(console.log(error.message));
