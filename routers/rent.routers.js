@@ -8,6 +8,6 @@ const router = Router();
 router.get("/rentals", buscarAlugueis);
 router.post("/rentals",validateSchema(rentSchema), inserirAluguel);
 router.post("/rentals/:id/return", finalizarAluguel);
-router.delete("/rentals/:id",validateSchema(rentSchema), deletarAluguel);
+router.delete("/rentals/:id", deletarAluguel);
 
 export default router

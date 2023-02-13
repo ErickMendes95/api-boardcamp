@@ -120,7 +120,7 @@ export async function deletarAluguel(req,res){
             return res.sendStatus(404);
         }
 
-        if(aluguel.rows[0].returnDate === null){
+        if(aluguel.rows[0].returnDate !== null){
             return res.sendStatus(400);
         }
 
