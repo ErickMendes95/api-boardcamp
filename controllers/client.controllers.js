@@ -61,7 +61,7 @@ export async function atualizarCliente(req,res){
 
         const verificaUsuario = await db.query(`SELECT * FROM customers where id= ${id}`);
 
-        if(verificaUsuario.rows[0].cpf !== cliente.cpf){
+        if(verificaUsuario.rows[0].cpf === cliente.cpf){
             return res.sendStatus(409);
         }
 
