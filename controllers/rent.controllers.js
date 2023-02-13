@@ -74,10 +74,14 @@ export async function inserirAluguel(req, res){
 
 export async function finalizarAluguel(req, res){
     const {id} = req.params;
+    let delayFee = null;
+    const returnDate = dayjs().format("YYYY-MM-DD");
     
     try {
 
         const aluguel = await db.query(`SELECT * FROM rentals WHERE id=${id}`);
+
+        const jogo = await db.query(`SELECT games."pricePerDay" FROM games WHERE id='${aluguel.rows[0].gameId}'`)
         
         if(aluguel.rowCount === 0){
             return res.sendStatus(404);
@@ -87,10 +91,17 @@ export async function finalizarAluguel(req, res){
             return res.sendStatus(400);
         }
         
-        const delayFee = dayjs().diff(aluguel.rows[0].rentDate, 'day');
-        console.log(delayFee);
+        if(dayjs().diff(aluguel.rows[0].rentDate, 'day') > aluguel.rows[0].daysRented ){
+            delayFee = dayjs().diff(aluguel.rows[0].rentDate, 'day') * jogo.rows[0].pricePerDay;
+        }
 
-        
+        await db.query(`UPDATE rentals
+        SET "returnDate"= '${returnDate}', "delayFee"= ${delayFee}
+        WHERE id= ${id}
+        `)
+
+        return res.sendStatus(200);
+
         
     } catch (error) {
         return res.status(500).send(console.log(error.message));
