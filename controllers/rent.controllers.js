@@ -120,13 +120,13 @@ export async function deletarAluguel(req,res){
             return res.sendStatus(404);
         }
 
-        if(aluguel.rows[0].returnDate !== null){
+        if(aluguel.rows[0].returnDate === null){
             return res.sendStatus(400);
         }
 
         await db.query(`DELETE FROM rentals WHERE id= ${id}`);
 
-        return res.sendStatus(200)
+        return res.sendStatus(200);
 
     }  catch (error) {
         return res.status(500).send(console.log(error.message));
