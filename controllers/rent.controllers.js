@@ -22,6 +22,7 @@ export async function buscarAlugueis(req, res){
             customerId: row.customerId,
             gameId: row.gameId,
             rentDate: row.rentDate,
+            daysRented: row.daysRented,
             returnDate: row.returnDate,
             originalPrice: row.originalPrice,
             delayFee: row.delayFee,
