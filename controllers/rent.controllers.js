@@ -73,9 +73,23 @@ export async function inserirAluguel(req, res){
 };
 
 export async function finalizarAluguel(req, res){
-    const cliente = req.body;
+    const {id} = req.params;
     
     try {
+
+        const aluguel = await db.query(`SELECT * FROM rentals WHERE id=${id}`);
+        
+        if(aluguel.rowCount === 0){
+            return res.sendStatus(404);
+        }
+
+        if(aluguel.rows[0].returnDate !== null){
+            return res.sendStatus(400);
+        }
+        
+        const delayFee = dayjs().diff(aluguel.rows[0].rentDate, 'day');
+        console.log(delayFee);
+
         
         
     } catch (error) {
